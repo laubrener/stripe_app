@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../bloc/bloc.dart';
 
 class TotalPayButton extends StatelessWidget {
   const TotalPayButton({super.key});
@@ -42,7 +45,11 @@ class TotalPayButton extends StatelessWidget {
                   style: TextStyle(fontSize: 20),
                 ),
                 const SizedBox(height: 20),
-                _BtnPay()
+                BlocBuilder<PayBloc, PayState>(
+                  builder: (context, state) {
+                    return _BtnPay(state: state);
+                  },
+                )
               ],
             ),
           ],
@@ -53,9 +60,14 @@ class TotalPayButton extends StatelessWidget {
 }
 
 class _BtnPay extends StatelessWidget {
+  final PayState state;
+
+  const _BtnPay({required this.state});
   @override
   Widget build(BuildContext context) {
-    return true ? buildCardBtn(context) : buildAppleAndGooglePay(context);
+    return state.isCardActivated
+        ? buildCardBtn(context)
+        : buildAppleAndGooglePay(context);
   }
 
   Widget buildCardBtn(BuildContext context) {
@@ -83,10 +95,10 @@ class _BtnPay extends StatelessWidget {
     return MaterialButton(
       onPressed: () {},
       height: 45,
-      minWidth: 150,
+      minWidth: MediaQuery.of(context).size.width * .9,
       shape: const StadiumBorder(),
       elevation: 0,
-      color: Colors.black,
+      color: Colors.pink[300],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -94,7 +106,7 @@ class _BtnPay extends StatelessWidget {
               Platform.isAndroid
                   ? FontAwesomeIcons.google
                   : FontAwesomeIcons.apple,
-              color: Colors.pink[300]),
+              color: Colors.white),
           const SizedBox(
             width: 20,
           ),
